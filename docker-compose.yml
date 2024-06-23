@@ -1,0 +1,40 @@
+
+services:
+  app:
+    build: ./back-end
+    networks:
+        - springapimysql-net
+        - frontend-net
+    ports:
+      - 8181:8181
+    environment:
+      - spring.datasource.url=jdbc:mysql://db:3306/ordermanagementdb?autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0.31
+    networks:
+    - springapimysql-net
+    restart: always
+    ports:
+      - 3307:3306
+    environment:
+      DATABASE_HOST: docker-mysql
+      DATABASE_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ordermanagementdb
+      MYSQL_PASSWORD: root
+  
+  frontapp:
+    build: ./front-end
+    networks:
+      - frontend-net
+    ports:
+      - 3000:3000
+
+networks:
+  springapimysql-net:
+    driver: bridge
+  frontend-net:
+    driver: bridge
